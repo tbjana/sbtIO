@@ -7,12 +7,62 @@ import java.io._
 import java.io.File
 //import java.util.{Map, HashMap}
 import scala.collection.mutable.ArrayBuffer
-
 import sys.process._
 
 
 object Main {
   println("Month, Income, Expenses, Profit")
+
+  def sysfindfile(fPath: String, fPattern: String): Unit = {
+    val stdout = new StringBuilder
+    val stderr = new StringBuilder
+    //Use the (linux command).! method to execute the command and get its exit status and sysout on screen. val javaProcs = ("ps auxw" #| "grep java").!
+    //Use the (linux command).!! method to execute the command and get its output. val javaProcs = ("ps auxw" #| "grep java").!!
+    // Use the lines method to execute the command in the background and get its result as a Stream .
+    // pipe is either used with #| outside double quotes or through minor scripts as  below. but execute them with ! won’t work: val result = ("ls -al | grep Foo").!!
+    // TO run PIPE use the sample val r = Seq("/bin/sh", "-c", "ls | grep .scala").!!
+    // Use #> to redirect STDOUT  (#>> to append), and #< to redirect STDIN .
+    // ("ls -al" #> new File("files.txt")).!
+    //("ps aux" #| "grep http" #> new File("http-processes.out")).!
+    // ("ps aux" #>> new File("ps.out")).!
+    // val status = ("cat /etc/passwd" #> new File("passwd.copy")).!
+    // println(status)
+
+    // downloading content from google
+    //import sys.process._ scala.language.postfixOps java.net.URL java.io.File
+    //new URL("http://www.google.com") #> new File("Output.html").!
+
+    //STDIN sample
+    //val contents = ("cat" #< new File("/etc/passwd")).!!
+    //println(contents)
+
+    //Run the ls command on the file temp, and if it’s found,  remove it, otherwise, print the ‘not found’ message.
+    //val result = ("ls temp" #&& "rm temp" #|| "echo 'temp' not found").!!.trim
+
+    //Handling Wildcard Characters in External Commands --> assign it to variable
+    //val filesExist = Seq("/bin/sh", "-c", "ls *.scala")
+    //val compileFiles = Seq("/bin/sh", "-c", "scalac *.scala")
+    //(filesExist #&& compileFiles #|| "echo no files to compile").!!
+
+    // run unix script in another path with assigning env variable
+    //The following example shows how to run a shell script in a directory named /home/al/bin while also setting the PATH environment variable:
+    //    val p = Process("runFoo.sh",
+    //      new File("/Users/Al/bin"),
+    //      "PATH" -> ".:/usr/bin:/opt/scala/bin")
+    //    val output = p.!!
+    //    val output = Process("env",
+    //      None,
+    //      "VAR1" -> "foo",
+    //      "VAR2" -> "bar")
+
+    val results = Seq("find", fPath, "-type", "f", "-name", fPattern, "-exec", "ls", "-ltr", "{}", ";").!!
+    println(results)
+    val status = Seq("find", fPath, "-type", "f", "-name", fPattern, "-exec", "ls", "-ltr", "{}", ";") ! ProcessLogger(stdout append _, stderr append _)
+    println(status)
+    println("stdout: " + stdout)
+    println("stderr: " + stderr)
+
+  }
 
   def csvlayout(): Unit = {
     val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
@@ -167,7 +217,8 @@ object Main {
     println("Hello world!")
     //filecsv()
     //csvlayout()
-    saddlesample()
+    //saddlesample()
+    sysfindfile("/home/jana/IdeaProjects/sbtIO", "*.pdf")
     //var files = getListOfFiles("../.")
     //files.foreach(println)
 
