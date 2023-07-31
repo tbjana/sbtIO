@@ -1,5 +1,4 @@
-import org.saddle.io._
-
+//import org.saddle.io._
 import java.text.{DateFormat, FieldPosition, Format, ParsePosition, SimpleDateFormat}
 import java.util.Date
 //import java.awt._
@@ -9,10 +8,13 @@ import java.io.File
 import scala.collection.mutable.ArrayBuffer
 import sys.process._
 
-
 object Main {
   println("Month, Income, Expenses, Profit")
 
+  def jarlist(): Unit = {
+    val filesExist = Seq("/bin/sh", "-c", "echo /opt/spark-3.2.2-bin-hadoop3.2/jars/*jar | tr ' ' ','").!!
+    println(filesExist)
+  }
   def sysfindfile(fPath: String, fPattern: String): Unit = {
     val stdout = new StringBuilder
     val stderr = new StringBuilder
@@ -64,7 +66,7 @@ object Main {
 
   }
 
-  def csvlayout(): Unit = {
+  def taxiobject(): Unit = {
     val format = new java.text.SimpleDateFormat("yyyy-MM-dd")
     val tmformat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
     case class taxi (vendor_name: String, Trip_Pickup_DateTime: String,
@@ -73,7 +75,7 @@ object Main {
                      Payment_Type: String, Fare_Amt: Float, surcharge: Float) /*, mta_tax: Float, Tip_Amt: Float, Tolls_Amt: Float, Total_Amt: Float
                      ) */
     val rows = ArrayBuffer[Array[String]]()
-    val source = io.Source.fromFile("taxi-etl-input-small.csv")
+    val source = scala.io.Source.fromFile("taxi-etl-input-small.csv")
     for (line <- source.getLines.drop(1)) {
       rows += line.split(",").map(_.trim)
       //val cols = line.split(",").map(_.trim)
@@ -95,11 +97,11 @@ object Main {
       //println(s"${row.length}")
     }
   }
-  def filecsv(): Unit = {
+  def ArrayObject(): Unit = {
     // each row is an array of strings (the columns in the csv file)
     val rows = ArrayBuffer[Array[String]]()
     try {
-      val source = io.Source.fromFile("taxi-etl-input-small.csv")
+      val source = scala.io.Source.fromFile("taxi-etl-input-small.csv")
       for (line <- source.getLines.drop(1)) {
         val cols = line.split(",").map(_.trim)
         // do whatever you want with the columns here
@@ -129,23 +131,23 @@ object Main {
 */
   }
 
-  def saddlesample(): Unit = {
-    val file = CsvFile("taxi-etl-input-small.csv")
-    val df = CsvParser.parse(file).withRowIndex(0).withColIndex(0)
-    println(df)
-    val df2 = df.rfilterIx {case x => x == "VTS" }
-    println(df2)
-
-    /*
-        val wkg = df2.col("Weight").mapValues(CsvParser.parseDouble).
-          mapValues(_ * 0.453592).setColIndex(Index("WeightKG"))
-        val df3 = df2.joinPreserveColIx(wkg.mapValues(_.toString))
-        println(df3)
-        df3.writeCsvFile("saddle-out.csv")
-    */
-
-
-  }
+//  def saddlesample(): Unit = {
+//    val file = CsvFile("taxi-etl-input-small.csv")
+//    val df = CsvParser.parse(file).withRowIndex(0).withColIndex(0)
+//    println(df)
+//    val df2 = df.rfilterIx {case x => x == "VTS" }
+//    println(df2)
+//
+//    /*
+//        val wkg = df2.col("Weight").mapValues(CsvParser.parseDouble).
+//          mapValues(_ * 0.453592).setColIndex(Index("WeightKG"))
+//        val df3 = df2.joinPreserveColIx(wkg.mapValues(_.toString))
+//        println(df3)
+//        df3.writeCsvFile("saddle-out.csv")
+//    */
+//
+//
+//  }
   def getListOfFiles(dir: String): List[File] = {
     val d = new File(dir)
     if (d.exists && d.isDirectory) {
@@ -213,24 +215,24 @@ object Main {
       case _ => println("some other number")
     }
   }
+
+  def addOne(tuple: (Char, Int)): (Char, Int) = tuple match {
+    case (chr, int) => (chr, int + 1)
+  }
+
   def main(args: Array[String]): Unit = {
     println("Hello world!")
-    //filecsv()
-    //csvlayout()
+    //ArrayObject()
+    //println(addOne('a', 3))
+    jarlist()
+
+    //taxiobject()
     //saddlesample()
-    sysfindfile("/home/jana/IdeaProjects/sbtIO", "*.pdf")
-    //var files = getListOfFiles("../.")
-    //files.foreach(println)
-
-    //val okFileExtensions = List("wav", "pdf")
-    //files = getListOfFilesWfilter(new File("../."), okFileExtensions)
-    //files.foreach(println)
-
-    //getListOfSubDirectories(new File("../.")).foreach(println)
+    //sysfindfile("/home/jana/IdeaProjects/sbtIO", "*.pdf")
     //sampleMap()
     //tstYield()
-
     //tstMatch(5)
+
   }
 
 }
